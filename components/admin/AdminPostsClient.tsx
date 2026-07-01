@@ -3,7 +3,6 @@
 import { useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
 import type { Post } from "@/types";
 
 export default function AdminPostsClient({ posts: initial }: { posts: Post[] }) {
@@ -13,22 +12,30 @@ export default function AdminPostsClient({ posts: initial }: { posts: Post[] }) 
   const [showGenModal, setShowGenModal] = useState(false);
   const [pending, startTransition] = useTransition();
   const router = useRouter();
-  const supabase = createClient();
 
   async function toggleStatus(post: Post) {
     const next = post.status === "published" ? "draft" : "published";
     setPosts((prev) => prev.map((p) => (p.id === post.id ? { ...p, status: next } : p)));
-    await supabase
-      .from("posts")
-      .update({ status: next, published_at: next === "published" ? new Date().toISOString() : null })
-      .eq("id", post.id);
+    await fetch("/api/admin/post", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        id: post.id,
+        status: next,
+        published_at: next === "published" ? new Date().toISOString() : null,
+      }),
+    });
     startTransition(() => router.refresh());
   }
 
   async function handleDelete(id: string) {
     if (!confirm("Delete this post? This cannot be undone.")) return;
     setPosts((prev) => prev.filter((p) => p.id !== id));
-    await supabase.from("posts").delete().eq("id", id);
+    await fetch("/api/admin/post", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id }),
+    });
     startTransition(() => router.refresh());
   }
 

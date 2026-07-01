@@ -2,7 +2,6 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
 import MediaUploader from "@/components/admin/MediaUploader";
 import type { Post, ContentStatus } from "@/types";
 
@@ -44,21 +43,32 @@ export default function PostForm({ post }: { post?: Post }) {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
-    const supabase = createClient();
 
     const payload = {
       ...form,
       excerpt: form.excerpt || null,
       body: form.body || null,
       cover_image_url: form.cover_image_url || null,
-      published_at: form.status === "published" && (!post?.published_at) ? new Date().toISOString() : post?.published_at,
+      published_at: form.status === "published" && !post?.published_at
+        ? new Date().toISOString()
+        : post?.published_at ?? null,
     };
 
-    const { error } = isEdit
-      ? await supabase.from("posts").update(payload).eq("id", post!.id)
-      : await supabase.from("posts").insert(payload);
+    const res = isEdit
+      ? await fetch("/api/admin/post", {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id: post!.id, ...payload }),
+        })
+      : await fetch("/api/admin/post", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
 
-    if (error) { setError(error.message); return; }
+    const data = await res.json();
+    if (!res.ok) { setError(data.error ?? "Save failed"); return; }
+
     startTransition(() => router.push("/admin/posts"));
     router.refresh();
   }

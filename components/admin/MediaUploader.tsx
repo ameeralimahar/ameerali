@@ -1,7 +1,6 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { createClient } from "@/lib/supabase/client";
 
 type UploadType = "image" | "video";
 
@@ -14,12 +13,12 @@ interface Props {
 
 const ACCEPT = {
   image: "image/jpeg,image/png,image/webp,image/gif",
-  video: "video/mp4,video/webm,video/mov",
+  video: "video/mp4,video/webm,video/quicktime",
 };
 
 const MAX_SIZE = {
-  image: 10 * 1024 * 1024,  // 10 MB
-  video: 200 * 1024 * 1024, // 200 MB
+  image: 10 * 1024 * 1024,   // 10 MB
+  video: 200 * 1024 * 1024,  // 200 MB
 };
 
 export default function MediaUploader({ type, currentUrl, onUploaded, label }: Props) {
@@ -40,24 +39,19 @@ export default function MediaUploader({ type, currentUrl, onUploaded, label }: P
 
     setUploading(true);
     try {
-      const supabase = createClient();
-      const ext = file.name.split(".").pop();
-      const path = `${type}s/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+      const fd = new FormData();
+      fd.append("file", file);
+      fd.append("folder", type === "image" ? "images" : "videos");
 
-      const { error: uploadError } = await supabase.storage
-        .from("portfolio-media")
-        .upload(path, file, { upsert: false, contentType: file.type });
+      const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
+      const data = await res.json();
 
-      if (uploadError) throw uploadError;
+      if (!res.ok) throw new Error(data.error ?? "Upload failed");
 
-      const { data } = supabase.storage.from("portfolio-media").getPublicUrl(path);
-      setPreview(data.publicUrl);
-      onUploaded(data.publicUrl);
+      setPreview(data.url);
+      onUploaded(data.url);
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Upload failed";
-      setError(msg.includes("Bucket not found")
-        ? 'Storage bucket not set up yet. Run the SQL in supabase/storage.sql first.'
-        : msg);
+      setError(err instanceof Error ? err.message : "Upload failed");
     } finally {
       setUploading(false);
       if (inputRef.current) inputRef.current.value = "";
@@ -67,6 +61,11 @@ export default function MediaUploader({ type, currentUrl, onUploaded, label }: P
   function handleRemove() {
     setPreview("");
     onUploaded("");
+  }
+
+  function handleUrlChange(val: string) {
+    setPreview(val);
+    onUploaded(val);
   }
 
   return (
@@ -94,9 +93,9 @@ export default function MediaUploader({ type, currentUrl, onUploaded, label }: P
         </div>
       )}
 
-      {/* Upload area */}
+      {/* Drop zone */}
       <div
-        onClick={() => inputRef.current?.click()}
+        onClick={() => !uploading && inputRef.current?.click()}
         className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-line/60 bg-surface/40 px-4 py-5 transition-all hover:border-teal/40 hover:bg-surface"
       >
         {uploading ? (
@@ -108,10 +107,10 @@ export default function MediaUploader({ type, currentUrl, onUploaded, label }: P
           <>
             <span className="text-2xl">{type === "image" ? "🖼️" : "🎬"}</span>
             <span className="font-mono text-xs text-muted text-center">
-              {preview ? "Replace" : "Upload"} {type}
+              {preview ? "Click to replace" : "Click to upload"} {type}
               <br />
               <span className="text-[10px] opacity-60">
-                {type === "image" ? "JPG, PNG, WebP — max 10 MB" : "MP4, WebM — max 200 MB"}
+                {type === "image" ? "JPG, PNG, WebP — max 10 MB" : "MP4, WebM, MOV — max 200 MB"}
               </span>
             </span>
           </>
@@ -127,11 +126,11 @@ export default function MediaUploader({ type, currentUrl, onUploaded, label }: P
         disabled={uploading}
       />
 
-      {/* Also allow pasting a URL directly */}
+      {/* URL paste fallback */}
       <input
-        type="url"
+        type="text"
         value={preview}
-        onChange={(e) => { setPreview(e.target.value); onUploaded(e.target.value); }}
+        onChange={(e) => handleUrlChange(e.target.value)}
         placeholder={`Or paste ${type} URL…`}
         className="rounded border border-line bg-surface px-3 py-2 font-body text-xs text-muted placeholder:text-muted/50 focus:border-teal/60 focus:text-ink focus:outline-none w-full"
       />

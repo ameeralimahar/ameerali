@@ -2,7 +2,6 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
 import MediaUploader from "@/components/admin/MediaUploader";
 import type { Project, ProjectCategory, ContentStatus } from "@/types";
 
@@ -87,7 +86,6 @@ export default function ProjectForm({
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
-    const supabase = createClient();
 
     const payload = {
       ...form,
@@ -100,12 +98,21 @@ export default function ProjectForm({
       github_repo_full_name: form.github_repo_full_name || null,
     };
 
-    const { error } = isEdit
-      ? await supabase.from("projects").update(payload).eq("id", project!.id)
-      : await supabase.from("projects").insert(payload);
+    const res = isEdit
+      ? await fetch("/api/admin/project", {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id: project!.id, ...payload }),
+        })
+      : await fetch("/api/admin/project", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
 
-    if (error) {
-      setError(error.message);
+    const data = await res.json();
+    if (!res.ok) {
+      setError(data.error ?? "Save failed");
       return;
     }
 

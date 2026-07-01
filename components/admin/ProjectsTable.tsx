@@ -4,28 +4,34 @@ import { useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd";
-import { createClient } from "@/lib/supabase/client";
 import type { Project } from "@/types";
 
 export default function ProjectsTable({ projects: initial }: { projects: Project[] }) {
   const [projects, setProjects] = useState(initial);
   const [pending, startTransition] = useTransition();
   const router = useRouter();
-  const supabase = createClient();
 
   async function toggleStatus(project: Project) {
     const next = project.status === "published" ? "draft" : "published";
     setProjects((prev) =>
       prev.map((p) => (p.id === project.id ? { ...p, status: next } : p))
     );
-    await supabase.from("projects").update({ status: next }).eq("id", project.id);
+    await fetch("/api/admin/project", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: project.id, status: next }),
+    });
     startTransition(() => router.refresh());
   }
 
   async function handleDelete(id: string) {
     if (!confirm("Delete this project? This cannot be undone.")) return;
     setProjects((prev) => prev.filter((p) => p.id !== id));
-    await supabase.from("projects").delete().eq("id", id);
+    await fetch("/api/admin/project", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id }),
+    });
     startTransition(() => router.refresh());
   }
 
@@ -36,10 +42,13 @@ export default function ProjectsTable({ projects: initial }: { projects: Project
     reordered.splice(result.destination.index, 0, moved);
     setProjects(reordered);
 
-    // Persist new display_order values
     await Promise.all(
       reordered.map((p, i) =>
-        supabase.from("projects").update({ display_order: i }).eq("id", p.id)
+        fetch("/api/admin/project", {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id: p.id, display_order: i }),
+        })
       )
     );
     startTransition(() => router.refresh());

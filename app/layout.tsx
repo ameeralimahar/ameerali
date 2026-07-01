@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Space_Grotesk, IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
-import TrackPageView from "@/components/TrackPageView";
 
 const display = Space_Grotesk({
   subsets: ["latin"],
@@ -42,7 +41,6 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${display.variable} ${body.variable} ${mono.variable}`}>
       <body className="font-body antialiased">
-        <TrackPageView />
         {children}
       </body>
     </html>

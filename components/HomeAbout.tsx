@@ -17,24 +17,23 @@ export default function HomeAbout() {
             </h2>
             <div className="mt-6 space-y-4 font-body text-base leading-relaxed text-muted">
               <p>
-                Most production problems I solve need both web development and AI/ML.
-                A document verification pipeline is computer vision{" "}
-                <em className="text-ink/80">and</em> a web portal. An automated grading
-                system is a machine-learning model{" "}
-                <em className="text-ink/80">and</em> the infrastructure that serves it
-                to thousands of users on exam day.
+                AI/ML-focused Software Engineer with production experience building
+                computer vision and automation pipelines deployed at scale — including
+                an <span className="text-ink/80">OMR grading system</span> and an{" "}
+                <span className="text-ink/80">ID document verification pipeline</span>{" "}
+                processing records for{" "}
+                <span className="text-teal font-medium">3M+ candidates</span> at SIBA
+                Testing Services.
               </p>
               <p>
-                I build and maintain enterprise systems at{" "}
-                <span className="text-teal font-medium">SIBA Testing Services</span>{" "}
-                used by millions of candidates — automated OMR grading, ID document
-                verification with OpenCV and PyTorch, and institutional web portals
-                built with React, Angular, Node.js/Express, deployed on AWS.
+                Skilled in <span className="text-ink/80">OpenCV, PyTorch, and Scikit-Learn</span>,
+                with backend/cloud experience (Python, AWS, SQL) to ship ML systems
+                end-to-end rather than just in notebooks.
               </p>
             </div>
 
             <div className="mt-8 flex flex-wrap gap-3">
-              {["Full-Stack", "AI / ML", "Cloud / AWS", "Computer Vision", "Open Source"].map((tag) => (
+              {["AI / ML", "Computer Vision", "Cloud / AWS", "Python", "Full-Stack"].map((tag) => (
                 <span key={tag} className="tech-badge">{tag}</span>
               ))}
             </div>

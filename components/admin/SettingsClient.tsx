@@ -1,8 +1,62 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import MediaUploader from "@/components/admin/MediaUploader";
 import type { SiteSettings } from "@/types";
+
+// Dedicated PDF uploader for resume
+function ResumeUploader({ onUploaded }: { onUploaded: (url: string) => void }) {
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.type !== "application/pdf") { setError("Please select a PDF file"); return; }
+    if (file.size > 10 * 1024 * 1024) { setError("PDF too large (max 10 MB)"); return; }
+    setUploading(true); setError(null);
+    try {
+      const fd = new FormData();
+      fd.append("file", file);
+      fd.append("folder", "resume");
+      const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "Upload failed");
+      onUploaded(data.url);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Upload failed");
+    } finally {
+      setUploading(false);
+      if (inputRef.current) inputRef.current.value = "";
+    }
+  }
+
+  return (
+    <div>
+      <div
+        onClick={() => !uploading && inputRef.current?.click()}
+        className="flex cursor-pointer items-center justify-center gap-3 rounded-xl border border-dashed border-line/60 bg-surface/40 px-4 py-4 transition-all hover:border-teal/40 hover:bg-surface"
+      >
+        {uploading ? (
+          <div className="flex items-center gap-2">
+            <div className="h-4 w-4 animate-spin rounded-full border-2 border-teal border-t-transparent" />
+            <span className="font-mono text-xs text-teal">Uploading PDF…</span>
+          </div>
+        ) : (
+          <>
+            <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24" className="text-muted">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+            </svg>
+            <span className="font-mono text-xs text-muted">Click to upload resume PDF — max 10 MB</span>
+          </>
+        )}
+      </div>
+      <input ref={inputRef} type="file" accept="application/pdf" onChange={handleFile} className="hidden" disabled={uploading} />
+      {error && <p className="mt-1 font-mono text-xs text-red-400">{error}</p>}
+    </div>
+  );
+}
 
 export default function SettingsClient({ settings }: { settings: SiteSettings | null }) {
   const [form, setForm] = useState({
@@ -88,22 +142,26 @@ export default function SettingsClient({ settings }: { settings: SiteSettings | 
       <div className="glass rounded-2xl border border-line/50 p-6">
         <h3 className="font-display text-base font-semibold text-ink mb-5 flex items-center gap-2">
           <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-400/10 border border-blue-400/20 text-sm">📄</span>
-          Resume
+          Resume / CV
         </h3>
         <div className="space-y-4">
+          {form.resume_url && (
+            <div className="flex items-center gap-3 rounded-xl border border-teal/20 bg-teal/5 px-4 py-3">
+              <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24" className="text-teal shrink-0">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+              </svg>
+              <span className="font-mono text-xs text-teal flex-1 truncate">{form.resume_url}</span>
+              <a href={form.resume_url} target="_blank" rel="noopener noreferrer" className="font-mono text-[10px] text-muted hover:text-teal transition-colors shrink-0">View ↗</a>
+            </div>
+          )}
           <div>
-            <label className={label}>Resume URL</label>
-            <input type="text" value={form.resume_url} onChange={e => set("resume_url", e.target.value)} placeholder="/resume.pdf or https://..." className={inp} />
-            <p className="mt-1 font-mono text-[9px] text-muted">
-              Upload your PDF to Supabase Storage and paste the URL, or use a path like /resume.pdf (place the file in /public)
-            </p>
+            <label className={label}>Upload Resume PDF</label>
+            <ResumeUploader onUploaded={url => set("resume_url", url)} />
           </div>
-          <MediaUploader
-            type="image"
-            label="Upload Resume PDF (paste URL above after upload)"
-            currentUrl=""
-            onUploaded={url => set("resume_url", url)}
-          />
+          <div>
+            <label className={label}>Or paste URL directly</label>
+            <input type="text" value={form.resume_url} onChange={e => set("resume_url", e.target.value)} placeholder="/resume.pdf or https://..." className={inp} />
+          </div>
         </div>
       </div>
 

@@ -27,8 +27,7 @@ export async function POST(request: Request) {
 
   if (!file) return NextResponse.json({ error: "No file provided" }, { status: 400 });
 
-  const maxSize = folder === "videos" ? 200 * 1024 * 1024 : 10 * 1024 * 1024;
-  if (file.size > maxSize) {
+  const maxSize = folder === "videos" ? 200 * 1024 * 1024 : 10 * 1024 * 1024;  if (file.size > maxSize) {
     return NextResponse.json({ error: `File too large (max ${folder === "videos" ? "200MB" : "10MB"})` }, { status: 400 });
   }
 

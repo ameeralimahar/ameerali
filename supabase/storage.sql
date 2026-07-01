@@ -12,7 +12,8 @@ VALUES (
   209715200, -- 200 MB limit
   ARRAY[
     'image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif',
-    'video/mp4', 'video/webm', 'video/quicktime'
+    'video/mp4', 'video/webm', 'video/quicktime',
+    'application/pdf'
   ]
 )
 ON CONFLICT (id) DO NOTHING;

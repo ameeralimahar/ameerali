@@ -3,8 +3,10 @@ import Hero from "@/components/Hero";
 import HomeAbout from "@/components/HomeAbout";
 import HomeProjects from "@/components/HomeProjects";
 import HomePosts from "@/components/HomePosts";
+import HomeSkillsAndExperience from "@/components/HomeSkillsAndExperience";
+import SkillsSlider from "@/components/SkillsSlider";
 import HomeCertifications from "@/components/HomeCertifications";
-import HomeSkills from "@/components/HomeSkills";
+import HomeAchievements from "@/components/HomeAchievements";
 import Contact from "@/components/Contact";
 import AIChatbot from "@/components/AIChatbot";
 import AnalyticsTracker from "@/components/AnalyticsTracker";
@@ -13,16 +15,18 @@ import {
   getFeaturedProjects,
   getRecentPosts,
   getCertifications,
+  getAchievements,
 } from "@/lib/content";
 
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  const [settings, projects, posts, certifications] = await Promise.all([
+  const [settings, projects, posts, certifications, achievements] = await Promise.all([
     getSiteSettings(),
     getFeaturedProjects(),
     getRecentPosts(3),
     getCertifications(),
+    getAchievements(),
   ]);
 
   return (
@@ -30,11 +34,13 @@ export default async function Home() {
       <AnalyticsTracker />
       <Nav />
       <Hero settings={settings} />
+      <SkillsSlider />
       <HomeAbout />
       <HomeProjects projects={projects} />
       <HomePosts posts={posts} />
-      <HomeSkills />
+      <HomeSkillsAndExperience />
       <HomeCertifications items={certifications} />
+      <HomeAchievements items={achievements} />
       <Contact settings={settings} />
       <AIChatbot />
     </main>

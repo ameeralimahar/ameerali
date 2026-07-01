@@ -34,8 +34,8 @@ export default function HomeCertifications({ items }: { items: Certification[] }
               className="glass glass-hover rounded-2xl p-6 border border-line/50 flex flex-col"
             >
               {c.badge_image_url ? (
-                <div className="mb-4 h-14 w-14 rounded-xl overflow-hidden bg-surface2 flex items-center justify-center">
-                  <img src={c.badge_image_url} alt={c.issuer} className="h-10 w-10 object-contain" />
+                <div className="mb-4 h-14 w-14 rounded-xl overflow-hidden bg-surface2 flex items-center justify-center border border-line/50">
+                  <img src={c.badge_image_url} alt={c.issuer} className="h-full w-full object-contain p-1" />
                 </div>
               ) : (
                 <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-teal/10 border border-teal/20">

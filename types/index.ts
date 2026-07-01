@@ -55,6 +55,7 @@ export interface Achievement {
   description: string | null;
   date: string | null;
   link_url: string | null;
+  image_url: string | null;
   display_order: number;
   status: ContentStatus;
   created_at: string;

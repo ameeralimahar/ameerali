@@ -72,6 +72,7 @@ create table if not exists achievements (
   description text,
   date date,
   link_url text,
+  image_url text,
   display_order int default 0,
   status text not null default 'published',
   created_at timestamptz default now()

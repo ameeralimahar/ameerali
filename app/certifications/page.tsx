@@ -35,22 +35,26 @@ export default async function CertificationsPage() {
             <p className="font-mono text-sm text-muted">No certifications added yet.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {certifications.map((c) => (
               <div key={c.id} className="glass glass-hover rounded-2xl p-6 border border-line/50 flex flex-col">
                 {/* Badge */}
-                <div className="mb-5 flex items-start justify-between">
+                <div className="mb-5 flex items-start justify-between gap-3">
                   {c.badge_image_url ? (
-                    <div className="h-16 w-16 rounded-xl overflow-hidden bg-surface2 flex items-center justify-center border border-line/50">
-                      <img src={c.badge_image_url} alt={c.issuer} className="h-12 w-12 object-contain" />
+                    <div className="h-16 w-16 rounded-xl overflow-hidden bg-surface2 flex items-center justify-center border border-line/50 shrink-0">
+                      <img
+                        src={c.badge_image_url}
+                        alt={`${c.issuer} badge`}
+                        className="h-full w-full object-contain p-1"
+                      />
                     </div>
                   ) : (
-                    <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-teal/10 border border-teal/20">
+                    <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-teal/10 border border-teal/20 shrink-0">
                       <span className="text-3xl">🏆</span>
                     </div>
                   )}
                   {c.issue_date && (
-                    <span className="font-mono text-xs text-muted bg-surface2 rounded-lg px-2 py-1">
+                    <span className="font-mono text-xs text-muted bg-surface2 rounded-lg px-2 py-1 shrink-0">
                       {new Date(c.issue_date).getFullYear()}
                     </span>
                   )}
@@ -89,15 +93,34 @@ export default async function CertificationsPage() {
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               {achievements.map((a) => (
                 <div key={a.id} className="glass glass-hover rounded-2xl p-6 border border-line/50 flex items-start gap-4">
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-violet/10 border border-violet/20">
-                    <span className="text-2xl">🏅</span>
-                  </div>
+                  {a.image_url ? (
+                    <img
+                      src={a.image_url}
+                      alt={a.title}
+                      className="h-14 w-14 rounded-xl object-cover border border-line/50 shrink-0"
+                    />
+                  ) : (
+                    <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-violet/10 border border-violet/20">
+                      <span className="text-2xl">🏅</span>
+                    </div>
+                  )}
                   <div>
                     <h3 className="font-display text-sm font-semibold text-ink">{a.title}</h3>
-                    {a.description && <p className="mt-1 font-body text-xs text-muted">{a.description}</p>}
-                    {a.date && <p className="mt-2 font-mono text-[10px] text-teal">{new Date(a.date).toLocaleDateString("en-US", { month: "long", year: "numeric" })}</p>}
+                    {a.description && (
+                      <p className="mt-1 font-body text-xs text-muted leading-relaxed">{a.description}</p>
+                    )}
+                    {a.date && (
+                      <p className="mt-2 font-mono text-[10px] text-teal">
+                        {new Date(a.date).toLocaleDateString("en-US", { month: "long", year: "numeric" })}
+                      </p>
+                    )}
                     {a.link_url && (
-                      <a href={a.link_url} target="_blank" rel="noopener noreferrer" className="mt-2 inline-block font-mono text-[10px] text-teal hover:opacity-80">
+                      <a
+                        href={a.link_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-2 inline-block font-mono text-[10px] text-teal hover:opacity-80 transition-opacity"
+                      >
                         Learn More →
                       </a>
                     )}

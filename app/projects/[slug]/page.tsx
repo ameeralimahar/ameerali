@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import Nav from "@/components/Nav";
-import { getProjectBySlug, getAllProjects } from "@/lib/content";
+import { getProjectBySlug, getAllProjects, getSiteSettings } from "@/lib/content";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
@@ -11,7 +11,10 @@ export async function generateStaticParams() {
 }
 
 export default async function ProjectDetailPage({ params }: { params: { slug: string } }) {
-  const project = await getProjectBySlug(params.slug);
+  const [project, settings] = await Promise.all([
+    getProjectBySlug(params.slug),
+    getSiteSettings(),
+  ]);
   if (!project) notFound();
 
   const CATEGORY_COLORS: Record<string, string> = {
@@ -26,7 +29,7 @@ export default async function ProjectDetailPage({ params }: { params: { slug: st
 
   return (
     <main className="bg-bg min-h-screen">
-      <Nav />
+      <Nav resumeUrl={settings.resume_url} />
 
       <div className="mx-auto max-w-content px-6 sm:px-10 pt-32 pb-20">
         {/* Back */}

@@ -11,10 +11,13 @@ const NAV_LINKS = [
   { href: "/certifications", label: "Certifications" },
 ];
 
-export default function Nav() {
+export default function Nav({ resumeUrl }: { resumeUrl?: string | null }) {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const pathname = usePathname();
+
+  // Fall back to /resume.pdf only if nothing is stored yet
+  const href = resumeUrl || "/resume.pdf";
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 20);
@@ -32,10 +35,7 @@ export default function Nav() {
     >
       <nav className="mx-auto flex max-w-content items-center justify-between px-6 py-4 sm:px-10">
         {/* Logo */}
-        <Link
-          href="/"
-          className="group flex items-center gap-2"
-        >
+        <Link href="/" className="group flex items-center gap-2">
           <span className="relative flex h-8 w-8 items-center justify-center rounded-lg bg-teal/10 border border-teal/20 font-mono text-xs font-bold text-teal transition-all group-hover:bg-teal/20 group-hover:border-teal/40">
             AA
             <span className="absolute inset-0 rounded-lg bg-teal/5 opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -54,9 +54,7 @@ export default function Nav() {
                 <Link
                   href={l.href}
                   className={`relative px-4 py-2 font-mono text-xs uppercase tracking-widest transition-colors rounded-lg ${
-                    active
-                      ? "text-teal bg-teal/8"
-                      : "text-muted hover:text-ink hover:bg-white/4"
+                    active ? "text-teal bg-teal/8" : "text-muted hover:text-ink hover:bg-white/4"
                   }`}
                 >
                   {active && (
@@ -83,7 +81,9 @@ export default function Nav() {
             </svg>
           </a>
           <a
-            href="/resume.pdf"
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
             className="rounded-lg border border-teal/30 bg-teal/8 px-4 py-2 font-mono text-xs uppercase tracking-widest text-teal transition-all hover:bg-teal/15 hover:border-teal/50 glow-teal-hover"
           >
             Resume
@@ -124,7 +124,9 @@ export default function Nav() {
             })}
             <li className="mt-2 border-t border-line pt-2">
               <a
-                href="/resume.pdf"
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="block rounded-lg px-4 py-3 font-mono text-xs uppercase tracking-widest text-teal"
               >
                 Resume →

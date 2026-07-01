@@ -1,6 +1,6 @@
 import Nav from "@/components/Nav";
 import Link from "next/link";
-import { getAllPosts } from "@/lib/content";
+import { getAllPosts, getSiteSettings } from "@/lib/content";
 
 export const dynamic = "force-dynamic";
 
@@ -10,11 +10,11 @@ function readTime(body: string | null): string {
 }
 
 export default async function PostsPage() {
-  const posts = await getAllPosts();
+  const [posts, settings] = await Promise.all([getAllPosts(), getSiteSettings()]);
 
   return (
     <main className="bg-bg min-h-screen">
-      <Nav />
+      <Nav resumeUrl={settings.resume_url} />
 
       <div className="pt-24 pb-8 relative overflow-hidden">
         <div className="orb orb-violet absolute right-0 top-0 h-80 w-80 opacity-10" />

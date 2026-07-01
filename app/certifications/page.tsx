@@ -1,17 +1,18 @@
 import Nav from "@/components/Nav";
-import { getCertifications, getAchievements } from "@/lib/content";
+import { getCertifications, getAchievements, getSiteSettings } from "@/lib/content";
 
 export const dynamic = "force-dynamic";
 
 export default async function CertificationsPage() {
-  const [certifications, achievements] = await Promise.all([
+  const [certifications, achievements, settings] = await Promise.all([
     getCertifications(),
     getAchievements(),
+    getSiteSettings(),
   ]);
 
   return (
     <main className="bg-bg min-h-screen">
-      <Nav />
+      <Nav resumeUrl={settings.resume_url} />
 
       <div className="pt-24 pb-8 relative overflow-hidden">
         <div className="orb orb-teal absolute left-0 top-0 h-80 w-80 opacity-10" />

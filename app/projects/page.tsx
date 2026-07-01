@@ -1,15 +1,15 @@
 import Nav from "@/components/Nav";
 import ProjectsGrid from "@/components/ProjectsGrid";
-import { getAllProjects } from "@/lib/content";
+import { getAllProjects, getSiteSettings } from "@/lib/content";
 
 export const dynamic = "force-dynamic";
 
 export default async function ProjectsPage() {
-  const projects = await getAllProjects();
+  const [projects, settings] = await Promise.all([getAllProjects(), getSiteSettings()]);
 
   return (
     <main className="bg-bg min-h-screen">
-      <Nav />
+      <Nav resumeUrl={settings.resume_url} />
       <div className="pt-24 pb-8 relative overflow-hidden">
         <div className="orb orb-teal absolute -left-32 top-0 h-96 w-96 opacity-10" />
         <div className="mx-auto max-w-content px-6 sm:px-10 pt-12">

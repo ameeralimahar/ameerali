@@ -32,7 +32,7 @@ export default async function Home() {
   return (
     <main className="bg-bg">
       <AnalyticsTracker />
-      <Nav />
+      <Nav resumeUrl={settings.resume_url} />
       <Hero settings={settings} />
       <SkillsSlider />
       <HomeAbout />

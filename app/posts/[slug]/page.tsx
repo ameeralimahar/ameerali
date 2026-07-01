@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import Nav from "@/components/Nav";
-import { getPostBySlug, getAllPosts } from "@/lib/content";
+import { getPostBySlug, getAllPosts, getSiteSettings } from "@/lib/content";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
@@ -16,12 +16,15 @@ function readTime(body: string | null): string {
 }
 
 export default async function PostDetailPage({ params }: { params: { slug: string } }) {
-  const post = await getPostBySlug(params.slug);
+  const [post, settings] = await Promise.all([
+    getPostBySlug(params.slug),
+    getSiteSettings(),
+  ]);
   if (!post) notFound();
 
   return (
     <main className="bg-bg min-h-screen">
-      <Nav />
+      <Nav resumeUrl={settings.resume_url} />
 
       <div className="mx-auto max-w-3xl px-6 sm:px-10 pt-32 pb-20">
         <Link

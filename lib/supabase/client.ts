@@ -1,0 +1,13 @@
+import { createBrowserClient } from "@supabase/ssr";
+
+/**
+ * Browser-side Supabase client for use in Client Components —
+ * e.g. the analytics tracking ping, and the admin dashboard's
+ * interactive forms in Phase 2.
+ */
+export function createClient() {
+  return createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
+}

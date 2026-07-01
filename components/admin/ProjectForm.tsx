@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import MediaUploader from "@/components/admin/MediaUploader";
 import type { Project, ProjectCategory, ContentStatus } from "@/types";
 
 type FormData = Omit<Project, "id" | "created_at" | "updated_at" | "stars" | "last_commit_at">;
@@ -215,12 +216,22 @@ export default function ProjectForm({
       <Field label="Repo URL">
         <input type="url" value={form.repo_url ?? ""} onChange={(e) => set("repo_url", e.target.value)} className={inputCls} />
       </Field>
-      <Field label="Video URL">
-        <input type="url" value={form.video_url ?? ""} onChange={(e) => set("video_url", e.target.value)} className={inputCls} />
-      </Field>
-      <Field label="Cover Image URL">
-        <input type="url" value={form.cover_image_url ?? ""} onChange={(e) => set("cover_image_url", e.target.value)} className={inputCls} />
-      </Field>
+
+      {/* Cover Image — upload or URL */}
+      <MediaUploader
+        type="image"
+        label="Cover Image (upload or paste URL)"
+        currentUrl={form.cover_image_url ?? ""}
+        onUploaded={(url) => set("cover_image_url", url)}
+      />
+
+      {/* Demo Video — upload or URL */}
+      <MediaUploader
+        type="video"
+        label="Demo Video (upload or paste URL / YouTube embed)"
+        currentUrl={form.video_url ?? ""}
+        onUploaded={(url) => set("video_url", url)}
+      />
 
       {/* Flags */}
       <div className="flex items-center gap-6">

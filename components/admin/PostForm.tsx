@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import MediaUploader from "@/components/admin/MediaUploader";
 import type { Post, ContentStatus } from "@/types";
 
 type FormData = Pick<Post, "title" | "slug" | "excerpt" | "body" | "cover_image_url" | "status">;
@@ -87,10 +88,12 @@ export default function PostForm({ post }: { post?: Post }) {
         <textarea rows={2} value={form.excerpt ?? ""} onChange={(e) => set("excerpt", e.target.value)} className={inputCls} />
       </div>
 
-      <div className="flex flex-col gap-1.5">
-        <label className="font-mono text-[10px] uppercase tracking-widest text-muted">Cover Image URL</label>
-        <input type="url" value={form.cover_image_url ?? ""} onChange={(e) => set("cover_image_url", e.target.value)} className={inputCls} />
-      </div>
+      <MediaUploader
+        type="image"
+        label="Cover Image (upload or paste URL)"
+        currentUrl={form.cover_image_url ?? ""}
+        onUploaded={(url) => set("cover_image_url", url)}
+      />
 
       <div className="flex flex-col gap-1.5">
         <label className="font-mono text-[10px] uppercase tracking-widest text-muted">Body (HTML)</label>

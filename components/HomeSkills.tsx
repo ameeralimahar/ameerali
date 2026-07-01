@@ -62,10 +62,14 @@ const EXPERIENCE = [
 ];
 
 const CERTS = [
-  { title: "Model Context Protocol (MCP)", issuer: "Scrimba" },
-  { title: "AI Engineering Path", issuer: "Scrimba" },
-  { title: "Supervised Machine Learning: Regression & Classification", issuer: "DeepLearning.AI / Stanford" },
-  { title: "Prompt Engineering for Generative AI", issuer: "Google" },
+  { title: "The AI Engineer Path", issuer: "Scrimba", url: "https://scrimba.com/@ameeralimahar:certs;cert2uNje7frtvWaQaoatN65UY9id6gZNjFM3ez" },
+  { title: "Intro to AI Engineering", issuer: "Scrimba", url: "https://scrimba.com/@ameeralimahar:certs;cert2uNje7frtvWaQaoatN66HA4zDwGzdP344F6" },
+  { title: "Learn Context Engineering", issuer: "Scrimba", url: "https://scrimba.com/@ameeralimahar:certs;cert22z7m4z2epX8bMc6kRyYKTRJUpYfiX6VdkLJyqCqsXW1" },
+  { title: "Learn AI Agents", issuer: "Scrimba", url: "https://scrimba.com/@ameeralimahar:certs;cert2uNje7frtvWaQaoatN66HeqMz7faDUNfETG" },
+  { title: "Intro to Model Context Protocol (MCP)", issuer: "Scrimba", url: "https://scrimba.com/@ameeralimahar:certs;cert22z7m4z2epX8bMc6kRyXxMGRDqKaSVgusRKv2RFnUfof" },
+  { title: "Build a Support Agent with Vercel AI SDK", issuer: "Scrimba", url: "https://scrimba.com/@ameeralimahar:certs;cert22z7m4z2epX8bMc6kRyF6eG39Y53nxvCq6bDG3sgEeD" },
+  { title: "Supervised Machine Learning: Regression & Classification", issuer: "DeepLearning.AI / Stanford", url: null },
+  { title: "Prompt Engineering for Generative AI", issuer: "Google", url: null },
 ];
 
 export default function HomeSkills() {
@@ -170,9 +174,19 @@ export default function HomeSkills() {
             {CERTS.map((c) => (
               <div key={c.title} className="glass glass-hover rounded-xl p-4 border border-line/50 flex items-center gap-4">
                 <span className="text-xl shrink-0">🏆</span>
-                <div>
-                  <div className="font-body text-sm text-ink">{c.title}</div>
+                <div className="min-w-0">
+                  <div className="font-body text-sm text-ink leading-snug">{c.title}</div>
                   <div className="font-mono text-[10px] text-teal mt-0.5">{c.issuer}</div>
+                  {c.url && (
+                    <a
+                      href={c.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-mono text-[10px] text-muted hover:text-teal transition-colors mt-0.5 inline-block"
+                    >
+                      Verify →
+                    </a>
+                  )}
                 </div>
               </div>
             ))}

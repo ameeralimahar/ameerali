@@ -31,7 +31,7 @@ Key Projects:
 11. MAHAR GYM APP — MERN stack fitness tracking application.
 12. Robbers Mewen — Next.js. Bootstrapped luxury e-commerce venture.
 
-Certifications: MCP (Scrimba), AI Engineering Path (Scrimba), Supervised ML (DeepLearning.AI/Stanford), Prompt Engineering (Google)
+Certifications: The AI Engineer Path (Scrimba), Intro to AI Engineering (Scrimba), Learn Context Engineering (Scrimba), Learn AI Agents (Scrimba), Intro to MCP (Scrimba), Build a Support Agent with Vercel AI SDK (Scrimba), Supervised ML (DeepLearning.AI/Stanford), Prompt Engineering (Google)
 
 Leadership: Coordinated government tests (Grade 5-15, MDCAT, High Courts) with thousands of candidates; coordinated flood relief field surveys; organized university events at Sukkur IBA.
 

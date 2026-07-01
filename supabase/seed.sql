@@ -149,12 +149,16 @@ ON CONFLICT (slug) DO UPDATE SET
 -- ============================================================
 -- CERTIFICATIONS
 -- ============================================================
-INSERT INTO certifications (title, issuer, issue_date, display_order, status)
+INSERT INTO certifications (title, issuer, credential_url, issue_date, display_order, status)
 VALUES
-  ('Model Context Protocol (MCP)', 'Scrimba', NULL, 1, 'published'),
-  ('AI Engineering Path', 'Scrimba', NULL, 2, 'published'),
-  ('Supervised Machine Learning: Regression and Classification', 'DeepLearning.AI & Stanford University (Coursera)', NULL, 3, 'published'),
-  ('Prompt Engineering for Generative AI', 'Google', NULL, 4, 'published')
+  ('The AI Engineer Path', 'Scrimba', 'https://scrimba.com/@ameeralimahar:certs;cert2uNje7frtvWaQaoatN65UY9id6gZNjFM3ez', NULL, 1, 'published'),
+  ('Intro to AI Engineering', 'Scrimba', 'https://scrimba.com/@ameeralimahar:certs;cert2uNje7frtvWaQaoatN66HA4zDwGzdP344F6', NULL, 2, 'published'),
+  ('Learn Context Engineering', 'Scrimba', 'https://scrimba.com/@ameeralimahar:certs;cert22z7m4z2epX8bMc6kRyYKTRJUpYfiX6VdkLJyqCqsXW1', NULL, 3, 'published'),
+  ('Learn AI Agents', 'Scrimba', 'https://scrimba.com/@ameeralimahar:certs;cert2uNje7frtvWaQaoatN66HeqMz7faDUNfETG', NULL, 4, 'published'),
+  ('Intro to Model Context Protocol (MCP)', 'Scrimba', 'https://scrimba.com/@ameeralimahar:certs;cert22z7m4z2epX8bMc6kRyXxMGRDqKaSVgusRKv2RFnUfof', NULL, 5, 'published'),
+  ('Build a Support Agent with Vercel AI SDK', 'Scrimba', 'https://scrimba.com/@ameeralimahar:certs;cert22z7m4z2epX8bMc6kRyF6eG39Y53nxvCq6bDG3sgEeD', NULL, 6, 'published'),
+  ('Supervised Machine Learning: Regression and Classification', 'DeepLearning.AI & Stanford University (Coursera)', NULL, NULL, 7, 'published'),
+  ('Prompt Engineering for Generative AI', 'Google', NULL, NULL, 8, 'published')
 ON CONFLICT DO NOTHING;
 
 -- ============================================================

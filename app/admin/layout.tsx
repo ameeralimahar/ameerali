@@ -1,21 +1,13 @@
-import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+"use client";
+
+import { usePathname } from "next/navigation";
 import AdminNav from "@/components/admin/AdminNav";
 
-export default async function AdminLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
 
-  // Double-check server-side — middleware is the first line of defence,
-  // this is the second so even a misconfigured middleware can't leak the UI.
-  if (!user || user.email !== process.env.ADMIN_EMAIL) {
-    redirect("/admin/login");
+  if (pathname === "/admin/login") {
+    return <>{children}</>;
   }
 
   return (

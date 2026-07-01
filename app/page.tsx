@@ -1,24 +1,27 @@
 import Nav from "@/components/Nav";
 import Hero from "@/components/Hero";
-import About from "@/components/About";
-import Stats from "@/components/Stats";
-import Skills from "@/components/Skills";
-import Projects from "@/components/Projects";
-import Experience from "@/components/Experience";
-import Certifications from "@/components/Certifications";
+import HomeAbout from "@/components/HomeAbout";
+import HomeProjects from "@/components/HomeProjects";
+import HomePosts from "@/components/HomePosts";
+import HomeCertifications from "@/components/HomeCertifications";
+import HomeSkills from "@/components/HomeSkills";
 import Contact from "@/components/Contact";
+import AIChatbot from "@/components/AIChatbot";
 import AnalyticsTracker from "@/components/AnalyticsTracker";
-import { getSiteSettings, getFeaturedProjects, getCertifications } from "@/lib/content";
+import {
+  getSiteSettings,
+  getFeaturedProjects,
+  getRecentPosts,
+  getCertifications,
+} from "@/lib/content";
 
-// Always fetch fresh content — this page is content-managed via the
-// admin dashboard / Supabase, so it should never be statically cached
-// at build time.
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  const [settings, projects, certifications] = await Promise.all([
+  const [settings, projects, posts, certifications] = await Promise.all([
     getSiteSettings(),
     getFeaturedProjects(),
+    getRecentPosts(3),
     getCertifications(),
   ]);
 
@@ -27,13 +30,13 @@ export default async function Home() {
       <AnalyticsTracker />
       <Nav />
       <Hero settings={settings} />
-      <About />
-      <Stats projectCount={projects.length} />
-      <Skills />
-      <Projects projects={projects} />
-      <Experience />
-      <Certifications items={certifications} />
+      <HomeAbout />
+      <HomeProjects projects={projects} />
+      <HomePosts posts={posts} />
+      <HomeSkills />
+      <HomeCertifications items={certifications} />
       <Contact settings={settings} />
+      <AIChatbot />
     </main>
   );
 }

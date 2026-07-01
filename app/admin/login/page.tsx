@@ -1,30 +1,50 @@
 "use client";
 
-import { useState } from "react";
-import { createClient } from "@/lib/supabase/client";
+import { useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import BubbleGrid from "@/components/BubbleGrid";
 
 export default function AdminLoginPage() {
-  const [email, setEmail] = useState("");
-  const [sent, setSent] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [digits, setDigits] = useState(["", "", "", ""]);
+  const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
+  const inputs = useRef<(HTMLInputElement | null)[]>([]);
+  const router = useRouter();
+
+  function handleChange(i: number, val: string) {
+    if (!/^\d?$/.test(val)) return;
+    const next = [...digits];
+    next[i] = val;
+    setDigits(next);
+    setError(false);
+    if (val && i < 3) inputs.current[i + 1]?.focus();
+  }
+
+  function handleKeyDown(i: number, e: React.KeyboardEvent) {
+    if (e.key === "Backspace" && !digits[i] && i > 0) {
+      inputs.current[i - 1]?.focus();
+    }
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    const pin = digits.join("");
+    if (pin.length < 4) return;
     setLoading(true);
-    setError(null);
 
-    const supabase = createClient();
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: { emailRedirectTo: `${window.location.origin}/admin/overview` },
+    const res = await fetch("/api/admin/verify-pin", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ pin }),
     });
 
-    if (error) {
-      setError(error.message);
+    if (res.ok) {
+      router.push("/admin/overview");
+      router.refresh();
     } else {
-      setSent(true);
+      setError(true);
+      setDigits(["", "", "", ""]);
+      inputs.current[0]?.focus();
     }
     setLoading(false);
   }
@@ -35,41 +55,49 @@ export default function AdminLoginPage() {
         <BubbleGrid rows={22} cols={48} cell={20} fillRatio={0.28} />
       </div>
 
-      <div className="relative w-full max-w-sm px-6">
+      <div className="relative w-full max-w-xs px-6 text-center">
         <p className="eyebrow mb-2">Admin Access</p>
         <h1 className="mb-8 font-display text-2xl font-semibold text-ink">
           AMEER ALI
         </h1>
 
-        {sent ? (
-          <div className="rounded border border-teal/30 bg-tealDim/20 p-6 text-center">
-            <p className="font-mono text-sm text-teal">Magic link sent.</p>
-            <p className="mt-2 font-body text-sm text-muted">
-              Check your inbox and click the link to sign in.
-            </p>
+        <form onSubmit={handleSubmit}>
+          <p className="mb-6 font-mono text-xs uppercase tracking-widest text-muted">
+            Enter PIN
+          </p>
+
+          <div className="mb-6 flex justify-center gap-3">
+            {digits.map((d, i) => (
+              <input
+                key={i}
+                ref={(el) => { inputs.current[i] = el; }}
+                type="password"
+                inputMode="numeric"
+                maxLength={1}
+                value={d}
+                onChange={(e) => handleChange(i, e.target.value)}
+                onKeyDown={(e) => handleKeyDown(i, e)}
+                className={`h-14 w-12 rounded border text-center font-mono text-xl text-ink bg-surface focus:outline-none transition-colors ${
+                  error
+                    ? "border-red-500/60 bg-red-500/5"
+                    : "border-line focus:border-teal/60"
+                }`}
+              />
+            ))}
           </div>
-        ) : (
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            <input
-              type="email"
-              required
-              placeholder="your@email.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="rounded border border-line bg-surface px-4 py-3 font-body text-sm text-ink placeholder:text-muted focus:border-teal/60 focus:outline-none"
-            />
-            {error && (
-              <p className="font-mono text-xs text-red-400">{error}</p>
-            )}
-            <button
-              type="submit"
-              disabled={loading}
-              className="rounded bg-teal px-4 py-3 font-mono text-xs uppercase tracking-widest text-bg transition-opacity hover:opacity-90 disabled:opacity-50"
-            >
-              {loading ? "Sending…" : "Send Magic Link"}
-            </button>
-          </form>
-        )}
+
+          {error && (
+            <p className="mb-4 font-mono text-xs text-red-400">Incorrect PIN</p>
+          )}
+
+          <button
+            type="submit"
+            disabled={loading || digits.join("").length < 4}
+            className="w-full rounded bg-teal py-3 font-mono text-xs uppercase tracking-widest text-bg transition-opacity hover:opacity-90 disabled:opacity-40"
+          >
+            {loading ? "Verifying…" : "Unlock"}
+          </button>
+        </form>
       </div>
     </div>
   );

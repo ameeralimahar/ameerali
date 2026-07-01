@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
 
 const NAV_LINKS = [
   { href: "/admin/overview", label: "Overview" },
@@ -18,9 +17,9 @@ export default function AdminNav() {
   const router = useRouter();
 
   async function handleSignOut() {
-    const supabase = createClient();
-    await supabase.auth.signOut();
+    await fetch("/api/admin/sign-out", { method: "POST" });
     router.push("/admin/login");
+    router.refresh();
   }
 
   return (

@@ -116,7 +116,7 @@ values (
   'Full-stack web platforms, cloud infrastructure, and AI/ML & computer-vision pipelines — shipped in production.',
   'ameer@example.com',
   'https://github.com/ameeralimahar',
-  'https://linkedin.com/in/ameer-ali',
+  'https://www.linkedin.com/in/ameeralimahar',
   '/resume.pdf'
 )
 on conflict (id) do nothing;

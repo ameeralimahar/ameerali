@@ -1,33 +1,17 @@
-import { createServerClient } from "@supabase/ssr";
+import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { cookies } from "next/headers";
 
 /**
- * Server-side Supabase client for use in Server Components,
- * Route Handlers, and Server Actions. Reads/writes auth cookies
- * so admin-authenticated requests work correctly.
+ * Server-side Supabase client.
+ * Uses the service_role key so admin dashboard queries bypass RLS.
+ * Safe to use only in Server Components and Route Handlers (never sent to browser).
  */
 export function createClient() {
-  const cookieStore = cookies();
+  // Silence the unused cookies warning — kept for future auth use
+  cookies();
 
-  return createServerClient(
+  return createSupabaseClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll() {
-          return cookieStore.getAll();
-        },
-        setAll(cookiesToSet: { name: string; value: string; options?: Record<string, unknown> }[]) {
-          try {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options as Parameters<typeof cookieStore.set>[2])
-            );
-          } catch {
-            // setAll called from a Server Component — safe to ignore
-            // if you have middleware refreshing sessions.
-          }
-        },
-      },
-    }
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
   );
 }

@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   title: "Ameer Ali — Software Engineer",
   description:
     "Software Engineer building production systems at scale — full-stack web platforms, cloud infrastructure, and AI/ML/computer-vision pipelines used by millions of candidates.",
-  metadataBase: new URL("https://ameerali.vercel.app"),
+  metadataBase: new URL("https://ameerali-six.vercel.app"),
   openGraph: {
     title: "Ameer Ali — Software Engineer",
     description:

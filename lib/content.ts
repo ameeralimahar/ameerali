@@ -31,7 +31,8 @@ export async function getAllProjects(): Promise<Project[]> {
       .from("projects")
       .select("*")
       .eq("status", "published")
-      .order("display_order", { ascending: true });
+      .order("display_order", { ascending: true })
+      .limit(1000); // Explicit high limit to get all items
     if (error || !data) return [];
     return data as Project[];
   } catch {
@@ -79,7 +80,8 @@ export async function getAllPosts(): Promise<Post[]> {
       .from("posts")
       .select("*")
       .eq("status", "published")
-      .order("published_at", { ascending: false });
+      .order("published_at", { ascending: false })
+      .limit(1000); // Explicit high limit to get all items
     if (error || !data) return [];
     return data as Post[];
   } catch {
@@ -126,7 +128,8 @@ export async function getCertifications(): Promise<Certification[]> {
       .from("certifications")
       .select("*")
       .eq("status", "published")
-      .order("display_order", { ascending: true });
+      .order("display_order", { ascending: true })
+      .limit(1000); // Explicit high limit to get all items
     if (error || !data) return [];
     return data as Certification[];
   } catch {
@@ -141,7 +144,8 @@ export async function getAchievements(): Promise<Achievement[]> {
       .from("achievements")
       .select("*")
       .eq("status", "published")
-      .order("display_order", { ascending: true });
+      .order("display_order", { ascending: true })
+      .limit(1000); // Explicit high limit to get all items
     if (error || !data) return [];
     return data as Achievement[];
   } catch {

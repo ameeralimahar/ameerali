@@ -1,3 +1,5 @@
+"use client";
+import { useState } from "react";
 import Link from "next/link";
 import type { Post } from "@/types";
 
@@ -6,8 +8,23 @@ function readTime(body: string | null) {
   return `${Math.max(1, Math.ceil(body.split(/\s+/).length / 200))} min read`;
 }
 
+const INITIAL_DISPLAY = 6;
+
 export default function HomePosts({ posts }: { posts: Post[] }) {
+  const [showAll, setShowAll] = useState(false);
+
   if (posts.length === 0) return null;
+
+  // Sort by published_at desc
+  const sortedPosts = [...posts].sort((a, b) => {
+    const dateA = a.published_at ? new Date(a.published_at).getTime() : 0;
+    const dateB = b.published_at ? new Date(b.published_at).getTime() : 0;
+    return dateB - dateA;
+  });
+
+  const displayPosts = showAll ? sortedPosts : sortedPosts.slice(0, INITIAL_DISPLAY);
+  const hasMore = posts.length > INITIAL_DISPLAY;
+
   return (
     <section id="posts" className="section-pad border-b border-line/50 relative overflow-hidden">
       <div className="orb orb-violet absolute right-0 top-1/2 h-64 w-64 opacity-10" />
@@ -24,7 +41,7 @@ export default function HomePosts({ posts }: { posts: Post[] }) {
         </div>
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 stagger">
-          {posts.map((post) => (
+          {displayPosts.map((post) => (
             <Link key={post.id} href={`/posts/${post.slug}`} className="group block reveal">
               <article className="glass-hover glass h-full rounded-2xl overflow-hidden border border-line/50 flex flex-col">
                 {post.cover_image_url ? (
@@ -52,6 +69,17 @@ export default function HomePosts({ posts }: { posts: Post[] }) {
             </Link>
           ))}
         </div>
+
+        {hasMore && (
+          <div className="mt-8 flex justify-center reveal">
+            <button
+              onClick={() => setShowAll(!showAll)}
+              className="glass glass-hover rounded-xl border border-line/50 px-8 py-3 font-mono text-sm text-ink hover:text-teal transition-colors"
+            >
+              {showAll ? "Show Less" : `See All ${posts.length} Posts`}
+            </button>
+          </div>
+        )}
       </div>
     </section>
   );

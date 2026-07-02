@@ -1,3 +1,5 @@
+"use client";
+import { useState } from "react";
 import Link from "next/link";
 import type { Project } from "@/types";
 
@@ -10,8 +12,21 @@ const CAT_COLORS: Record<string, string> = {
 };
 
 const GRADIENTS = ["#0D3B35","#2E1065","#1a2d4e","#2d1a0e","#1a1a2e"];
+const INITIAL_DISPLAY = 6;
 
 export default function HomeProjects({ projects }: { projects: Project[] }) {
+  const [showAll, setShowAll] = useState(false);
+
+  // Sort by featured first, then by created_at desc
+  const sortedProjects = [...projects].sort((a, b) => {
+    if (a.featured && !b.featured) return -1;
+    if (!a.featured && b.featured) return 1;
+    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+  });
+
+  const displayProjects = showAll ? sortedProjects : sortedProjects.slice(0, INITIAL_DISPLAY);
+  const hasMore = projects.length > INITIAL_DISPLAY;
+
   return (
     <section id="work" className="section-pad border-b border-line/50 relative overflow-hidden">
       <div className="orb orb-teal absolute -left-32 bottom-0 h-80 w-80 opacity-10" />
@@ -21,7 +36,7 @@ export default function HomeProjects({ projects }: { projects: Project[] }) {
           <div className="eyebrow mb-4 flex items-center gap-3">
             <span className="h-px w-8 bg-teal" />Portfolio
           </div>
-          <h2 className="font-display text-3xl font-bold text-ink sm:text-4xl">All Projects</h2>
+          <h2 className="font-display text-3xl font-bold text-ink sm:text-4xl">Featured Projects</h2>
           <p className="mt-3 font-body text-base text-muted max-w-xl">
             Production systems, AI/ML pipelines, cloud infrastructure, and everything in between.
           </p>
@@ -32,13 +47,26 @@ export default function HomeProjects({ projects }: { projects: Project[] }) {
             <p className="font-mono text-sm text-muted">No projects yet. Add them from the admin dashboard.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 stagger">
-            {projects.map((p, i) => (
-              <div key={p.id} className="reveal">
-                <ProjectCard project={p} index={i} />
+          <>
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 stagger">
+              {displayProjects.map((p, i) => (
+                <div key={p.id} className="reveal">
+                  <ProjectCard project={p} index={i} />
+                </div>
+              ))}
+            </div>
+
+            {hasMore && (
+              <div className="mt-8 flex justify-center reveal">
+                <button
+                  onClick={() => setShowAll(!showAll)}
+                  className="glass glass-hover rounded-xl border border-line/50 px-8 py-3 font-mono text-sm text-ink hover:text-teal transition-colors"
+                >
+                  {showAll ? "Show Less" : `See All ${projects.length} Projects`}
+                </button>
               </div>
-            ))}
-          </div>
+            )}
+          </>
         )}
       </div>
     </section>

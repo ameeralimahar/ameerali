@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  darkMode: "class",
   content: [
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -7,28 +8,27 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        bg: "#080E1A",
-        surface: "#0D1526",
-        surface2: "#111C30",
-        surface3: "#162038",
-        teal: "#2DD4BF",
-        tealDim: "#0D3B35",
-        tealGlow: "#2DD4BF33",
-        violet: "#7C3AED",
-        violetDim: "#2E1065",
-        ink: "#F0F6FC",
-        muted: "#7D8FA8",
-        line: "#1A2740",
-        lineHover: "#243550",
+        // Dark theme tokens
+        bg: "var(--color-bg)",
+        surface: "var(--color-surface)",
+        surface2: "var(--color-surface2)",
+        surface3: "var(--color-surface3)",
+        teal: "var(--color-teal)",
+        tealDim: "var(--color-tealDim)",
+        tealGlow: "var(--color-tealGlow)",
+        violet: "var(--color-violet)",
+        violetDim: "var(--color-violetDim)",
+        ink: "var(--color-ink)",
+        muted: "var(--color-muted)",
+        line: "var(--color-line)",
+        lineHover: "var(--color-lineHover)",
       },
       fontFamily: {
         display: ["var(--font-display)", "sans-serif"],
         body: ["var(--font-body)", "sans-serif"],
         mono: ["var(--font-mono)", "monospace"],
       },
-      maxWidth: {
-        content: "75rem",
-      },
+      maxWidth: { content: "75rem" },
       keyframes: {
         fillBubble: {
           "0%": { fill: "transparent", stroke: "#1A2740" },
@@ -39,10 +39,7 @@ module.exports = {
           "0%": { opacity: "0", transform: "translateY(20px)" },
           "100%": { opacity: "1", transform: "translateY(0)" },
         },
-        fadeIn: {
-          "0%": { opacity: "0" },
-          "100%": { opacity: "1" },
-        },
+        fadeIn: { "0%": { opacity: "0" }, "100%": { opacity: "1" } },
         float: {
           "0%, 100%": { transform: "translateY(0px) rotate(0deg)" },
           "33%": { transform: "translateY(-12px) rotate(1deg)" },
@@ -68,13 +65,9 @@ module.exports = {
           "0%": { opacity: "0", transform: "translateX(30px)" },
           "100%": { opacity: "1", transform: "translateX(0)" },
         },
-        typewriter: {
-          "from": { width: "0" },
-          "to": { width: "100%" },
-        },
-        blink: {
-          "0%, 100%": { borderColor: "transparent" },
-          "50%": { borderColor: "#2DD4BF" },
+        revealUp: {
+          "0%": { opacity: "0", transform: "translateY(40px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
         },
       },
       animation: {
@@ -86,13 +79,7 @@ module.exports = {
         gradientShift: "gradientShift 4s ease infinite",
         slideInLeft: "slideInLeft 0.6s ease forwards",
         slideInRight: "slideInRight 0.6s ease forwards",
-      },
-      backgroundSize: {
-        "200%": "200% 200%",
-      },
-      perspective: {
-        "1000": "1000px",
-        "2000": "2000px",
+        revealUp: "revealUp 0.6s ease forwards",
       },
     },
   },

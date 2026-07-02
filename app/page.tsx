@@ -12,8 +12,8 @@ import AIChatbot from "@/components/AIChatbot";
 import AnalyticsTracker from "@/components/AnalyticsTracker";
 import {
   getSiteSettings,
-  getFeaturedProjects,
-  getRecentPosts,
+  getAllProjects,
+  getAllPosts,
   getCertifications,
   getAchievements,
 } from "@/lib/content";
@@ -23,8 +23,8 @@ export const dynamic = "force-dynamic";
 export default async function Home() {
   const [settings, projects, posts, certifications, achievements] = await Promise.all([
     getSiteSettings(),
-    getFeaturedProjects(),
-    getRecentPosts(3),
+    getAllProjects(),
+    getAllPosts(),
     getCertifications(),
     getAchievements(),
   ]);

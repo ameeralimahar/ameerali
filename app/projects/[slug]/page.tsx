@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import Nav from "@/components/Nav";
 import { getProjectBySlug, getAllProjects, getSiteSettings } from "@/lib/content";
 import Link from "next/link";
+import ProjectDetailClient from "@/components/ProjectDetailClient";
 
 export const dynamic = "force-dynamic";
 
@@ -99,7 +100,10 @@ export default async function ProjectDetailPage({ params }: { params: { slug: st
             {/* Tech stack */}
             {project.tech_stack.length > 0 && (
               <div className="mt-10">
-                <h2 className="mb-4 font-display text-lg font-semibold text-ink">Tech Stack</h2>
+                <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
+                  <h2 className="font-display text-lg font-semibold text-ink">Tech Stack</h2>
+                  <ProjectDetailClient projectSlug={project.slug} projectTitle={project.title} />
+                </div>
                 <div className="flex flex-wrap gap-2">
                   {project.tech_stack.map((s) => (
                     <span key={s} className="tech-badge text-sm px-3 py-1.5">{s}</span>

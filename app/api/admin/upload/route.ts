@@ -1,15 +1,8 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
-import { cookies } from "next/headers";
+import { isAuthed } from "@/lib/adminAuth";
 
-const ADMIN_PIN = process.env.ADMIN_PIN ?? "0000";
-const COOKIE_NAME = "admin_session";
 const BUCKET = "portfolio-media";
-
-function isAuthed(): boolean {
-  const session = cookies().get(COOKIE_NAME)?.value;
-  return session === `pin_ok_${ADMIN_PIN}`;
-}
 
 function getServiceClient() {
   return createClient(

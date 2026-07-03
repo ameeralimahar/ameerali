@@ -1,8 +1,16 @@
 import { NextResponse } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { createClient } from "@/lib/supabase/server";
+import { isAuthed } from "@/lib/adminAuth";
 
 export async function POST(request: Request) {
+  // This route was previously missing an auth check entirely — anyone
+  // who found this endpoint could burn the Gemini API quota and insert
+  // posts directly into the live database with zero credentials.
+  if (!isAuthed()) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey || apiKey === "your-gemini-api-key-here") {
     return NextResponse.json({ error: "GEMINI_API_KEY not configured" }, { status: 500 });

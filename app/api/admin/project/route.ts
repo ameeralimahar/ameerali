@@ -1,14 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { cookies } from "next/headers";
-
-const ADMIN_PIN = process.env.ADMIN_PIN ?? "0000";
-const COOKIE_NAME = "admin_session";
-
-function isAuthed(): boolean {
-  const session = cookies().get(COOKIE_NAME)?.value;
-  return session === `pin_ok_${ADMIN_PIN}`;
-}
+import { isAuthed } from "@/lib/adminAuth";
 
 // UPDATE existing project
 export async function PATCH(request: Request) {

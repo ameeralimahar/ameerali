@@ -1,11 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { cookies } from "next/headers";
-
-const ADMIN_PIN = process.env.ADMIN_PIN ?? "0000";
-function isAuthed() {
-  return cookies().get("admin_session")?.value === `pin_ok_${ADMIN_PIN}`;
-}
+import { isAuthed } from "@/lib/adminAuth";
 
 export async function POST(request: Request) {
   if (!isAuthed()) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

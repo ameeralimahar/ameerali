@@ -8,7 +8,7 @@ interface Props {
   type: UploadType;
   currentUrl: string;
   onUploaded: (url: string) => void;
-  label?: string;
+  label?: string | null;
 }
 
 const ACCEPT = {
@@ -70,9 +70,11 @@ export default function MediaUploader({ type, currentUrl, onUploaded, label }: P
 
   return (
     <div className="flex flex-col gap-2">
-      <span className="font-mono text-[10px] uppercase tracking-widest text-muted">
-        {label ?? (type === "image" ? "Cover Image" : "Demo Video")}
-      </span>
+      {label !== null && (
+        <span className="font-mono text-[10px] uppercase tracking-widest text-muted">
+          {label ?? (type === "image" ? "Cover Image" : "Demo Video")}
+        </span>
+      )}
 
       {/* Preview */}
       {preview && (

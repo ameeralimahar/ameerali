@@ -20,6 +20,7 @@ const EMPTY: FormData = {
   repo_url: "",
   video_url: "",
   cover_image_url: "",
+  media_urls: [],
   featured: false,
   display_order: 0,
   status: "draft",
@@ -51,6 +52,7 @@ export default function ProjectForm({
           repo_url: project.repo_url ?? "",
           video_url: project.video_url ?? "",
           cover_image_url: project.cover_image_url ?? "",
+          media_urls: project.media_urls ?? [],
           featured: project.featured,
           display_order: project.display_order,
           status: project.status,
@@ -95,6 +97,7 @@ export default function ProjectForm({
       repo_url: form.repo_url || null,
       video_url: form.video_url || null,
       cover_image_url: form.cover_image_url || null,
+      media_urls: form.media_urls && form.media_urls.length > 0 ? form.media_urls : null,
       github_repo_full_name: form.github_repo_full_name || null,
     };
 
@@ -239,6 +242,50 @@ export default function ProjectForm({
         currentUrl={form.video_url ?? ""}
         onUploaded={(url) => set("video_url", url)}
       />
+
+      {/* Additional Media Gallery */}
+      <Field label="Additional Media (images/videos for gallery)">
+        <div className="space-y-3">
+          {/* Display existing media */}
+          {form.media_urls && form.media_urls.length > 0 && (
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+              {form.media_urls.map((url, idx) => (
+                <div key={idx} className="relative group rounded-lg overflow-hidden border border-line aspect-video">
+                  {url.includes(".mp4") || url.includes(".webm") || url.includes("video") ? (
+                    <video src={url} className="h-full w-full object-cover" />
+                  ) : (
+                    <img src={url} alt={`Media ${idx + 1}`} className="h-full w-full object-cover" />
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const newUrls = form.media_urls?.filter((_, i) => i !== idx) || [];
+                      set("media_urls", newUrls);
+                    }}
+                    className="absolute top-2 right-2 h-6 w-6 rounded-full bg-red-500/90 text-white opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Add new media */}
+          <MediaUploader
+            type="image"
+            label={null}
+            currentUrl=""
+            onUploaded={(url) => {
+              const newUrls = [...(form.media_urls || []), url];
+              set("media_urls", newUrls);
+            }}
+          />
+          <p className="font-mono text-xs text-muted">
+            Upload images or videos one at a time. They will appear in the project gallery.
+          </p>
+        </div>
+      </Field>
 
       {/* Flags */}
       <div className="flex items-center gap-6">

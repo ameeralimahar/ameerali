@@ -13,6 +13,7 @@ export interface Project {
   repo_url: string | null;
   video_url: string | null;
   cover_image_url: string | null;
+  media_urls?: string[];
   featured: boolean;
   display_order: number;
   status: ContentStatus;

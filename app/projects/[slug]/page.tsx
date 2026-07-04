@@ -3,6 +3,7 @@ import Nav from "@/components/Nav";
 import { getProjectBySlug, getAllProjects, getSiteSettings } from "@/lib/content";
 import Link from "next/link";
 import ProjectDetailClient from "@/components/ProjectDetailClient";
+import ProjectMediaGallery from "@/components/ProjectMediaGallery";
 
 export const dynamic = "force-dynamic";
 
@@ -44,33 +45,13 @@ export default async function ProjectDetailPage({ params }: { params: { slug: st
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-[1fr_320px]">
           {/* Main */}
           <div>
-            {/* Hero image */}
-            {project.cover_image_url ? (
-              <div className="mb-8 overflow-hidden rounded-2xl border border-line/50 aspect-video">
-                <img
-                  src={project.cover_image_url}
-                  alt={project.title}
-                  className="h-full w-full object-cover"
-                />
-              </div>
-            ) : (
-              <div className="mb-8 overflow-hidden rounded-2xl border border-line/50 aspect-video bg-surface2 flex items-center justify-center relative">
-                <div className="absolute inset-0" style={{ background: "radial-gradient(circle at 30% 50%, rgba(45,212,191,0.1) 0%, transparent 60%)" }} />
-                <span className="font-display text-8xl font-bold text-ink/5">{project.title.charAt(0)}</span>
-              </div>
-            )}
-
-            {/* Video embed */}
-            {project.video_url && (
-              <div className="mb-8 overflow-hidden rounded-2xl border border-line/50 aspect-video">
-                <iframe
-                  src={project.video_url.replace("watch?v=", "embed/")}
-                  title={`${project.title} demo`}
-                  className="h-full w-full"
-                  allowFullScreen
-                />
-              </div>
-            )}
+            {/* Media Gallery */}
+            <ProjectMediaGallery 
+              coverImage={project.cover_image_url}
+              videoUrl={project.video_url}
+              mediaUrls={project.media_urls || []}
+              projectTitle={project.title}
+            />
 
             <div className="flex flex-wrap items-center gap-3 mb-4">
               <span className={`rounded-full border px-3 py-1 font-mono text-xs uppercase tracking-wider ${colorClass}`}>
@@ -100,10 +81,7 @@ export default async function ProjectDetailPage({ params }: { params: { slug: st
             {/* Tech stack */}
             {project.tech_stack.length > 0 && (
               <div className="mt-10">
-                <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
-                  <h2 className="font-display text-lg font-semibold text-ink">Tech Stack</h2>
-                  <ProjectDetailClient projectSlug={project.slug} projectTitle={project.title} />
-                </div>
+                <h2 className="mb-4 font-display text-lg font-semibold text-ink">Tech Stack</h2>
                 <div className="flex flex-wrap gap-2">
                   {project.tech_stack.map((s) => (
                     <span key={s} className="tech-badge text-sm px-3 py-1.5">{s}</span>
@@ -115,6 +93,11 @@ export default async function ProjectDetailPage({ params }: { params: { slug: st
 
           {/* Sidebar */}
           <aside className="space-y-4">
+            {/* Inquiry CTA */}
+            <div className="glass rounded-2xl p-6 border border-line/50">
+              <ProjectDetailClient projectSlug={project.slug} projectTitle={project.title} />
+            </div>
+
             {/* Links card */}
             <div className="glass rounded-2xl p-6 border border-line/50">
               <h3 className="font-display text-sm font-semibold text-ink mb-4">Project Links</h3>

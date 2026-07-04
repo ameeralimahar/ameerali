@@ -1,14 +1,6 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { createClient } from "@/lib/supabase/server";
 import { Resend } from "resend";
-
-// Use anon client for public inserts (RLS allows this)
-function getAnonClient() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
-}
 
 export async function POST(request: Request) {
   try {
@@ -41,8 +33,8 @@ export async function POST(request: Request) {
       );
     }
 
-    // Insert into Supabase
-    const supabase = getAnonClient();
+    // Insert into Supabase using service role client (bypasses RLS)
+    const supabase = createClient();
     const { data, error } = await supabase
       .from("project_inquiries")
       .insert({
@@ -59,7 +51,7 @@ export async function POST(request: Request) {
     if (error) {
       console.error("Supabase insert error:", error);
       return NextResponse.json(
-        { error: "Failed to save inquiry" },
+        { error: `Database error: ${error.message}` },
         { status: 500 }
       );
     }

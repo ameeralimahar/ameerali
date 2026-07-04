@@ -7,6 +7,11 @@ export const dynamic = "force-dynamic";
 export default async function ProjectsPage() {
   const [projects, settings] = await Promise.all([getAllProjects(), getSiteSettings()]);
 
+  // Sort by created_at descending (newest first) - ensure published only
+  const publishedProjects = projects
+    .filter(p => p.status === 'published')
+    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+
   return (
     <main className="bg-bg min-h-screen">
       <Nav resumeUrl={settings.resume_url} />
@@ -25,7 +30,7 @@ export default async function ProjectsPage() {
           </p>
         </div>
       </div>
-      <ProjectsGrid projects={projects} />
+      <ProjectsGrid projects={publishedProjects} />
     </main>
   );
 }

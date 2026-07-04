@@ -13,10 +13,11 @@ export default async function ProjectsPage({
   const supabase = createClient();
   const statusFilter = searchParams.status ?? "all";
 
+  // Fetch all projects sorted by created_at descending (newest first)
   let query = supabase
     .from("projects")
     .select("*")
-    .order("display_order", { ascending: true });
+    .order("created_at", { ascending: false });
 
   if (statusFilter !== "all") {
     query = query.eq("status", statusFilter);
@@ -24,6 +25,11 @@ export default async function ProjectsPage({
 
   const { data, error } = await query;
   const projects: Project[] = (data as Project[]) ?? [];
+
+  // Count by status
+  const allCount = projects.length;
+  const publishedCount = projects.filter((p) => p.status === "published").length;
+  const draftCount = projects.filter((p) => p.status === "draft").length;
 
   return (
     <div>
@@ -42,17 +48,21 @@ export default async function ProjectsPage({
 
       {/* Status filter tabs */}
       <div className="mb-6 flex gap-1">
-        {["all", "published", "draft"].map((s) => (
+        {[
+          { label: "all", count: allCount },
+          { label: "published", count: publishedCount },
+          { label: "draft", count: draftCount },
+        ].map(({ label, count }) => (
           <Link
-            key={s}
-            href={`/admin/projects${s !== "all" ? `?status=${s}` : ""}`}
+            key={label}
+            href={`/admin/projects${label !== "all" ? `?status=${label}` : ""}`}
             className={`rounded px-3 py-1.5 font-mono text-xs uppercase tracking-widest transition-colors ${
-              statusFilter === s
+              statusFilter === label
                 ? "bg-tealDim text-teal"
                 : "text-muted hover:bg-surface2 hover:text-ink"
             }`}
           >
-            {s}
+            {label} <span className="ml-1 opacity-60">({count})</span>
           </Link>
         ))}
       </div>

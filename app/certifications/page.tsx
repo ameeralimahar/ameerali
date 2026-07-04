@@ -1,4 +1,5 @@
 import Nav from "@/components/Nav";
+import CertificationsGrid from "@/components/CertificationsGrid";
 import { getCertifications, getAchievements, getSiteSettings } from "@/lib/content";
 
 export const dynamic = "force-dynamic";
@@ -9,6 +10,24 @@ export default async function CertificationsPage() {
     getAchievements(),
     getSiteSettings(),
   ]);
+
+  // Sort certifications by date descending (newest first)
+  const sortedCertifications = certifications
+    .filter(c => c.status === 'published')
+    .sort((a, b) => {
+      const dateA = a.issue_date ? new Date(a.issue_date).getTime() : 0;
+      const dateB = b.issue_date ? new Date(b.issue_date).getTime() : 0;
+      return dateB - dateA;
+    });
+
+  // Sort achievements by date descending (newest first)
+  const sortedAchievements = achievements
+    .filter(a => a.status === 'published')
+    .sort((a, b) => {
+      const dateA = a.date ? new Date(a.date).getTime() : 0;
+      const dateB = b.date ? new Date(b.date).getTime() : 0;
+      return dateB - dateA;
+    });
 
   return (
     <main className="bg-bg min-h-screen">
@@ -31,59 +50,16 @@ export default async function CertificationsPage() {
       </div>
 
       <div className="mx-auto max-w-content px-6 sm:px-10 pb-20">
-        {certifications.length === 0 ? (
+        {sortedCertifications.length === 0 ? (
           <div className="glass rounded-2xl p-16 text-center">
             <p className="font-mono text-sm text-muted">No certifications added yet.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {certifications.map((c) => (
-              <div key={c.id} className="glass glass-hover rounded-2xl p-6 border border-line/50 flex flex-col">
-                {/* Badge */}
-                <div className="mb-5 flex items-start justify-between gap-3">
-                  {c.badge_image_url ? (
-                    <div className="h-16 w-16 rounded-xl overflow-hidden bg-surface2 flex items-center justify-center border border-line/50 shrink-0">
-                      <img
-                        src={c.badge_image_url}
-                        alt={`${c.issuer} badge`}
-                        className="h-full w-full object-contain p-1"
-                      />
-                    </div>
-                  ) : (
-                    <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-teal/10 border border-teal/20 shrink-0">
-                      <span className="text-3xl">🏆</span>
-                    </div>
-                  )}
-                  {c.issue_date && (
-                    <span className="font-mono text-xs text-muted bg-surface2 rounded-lg px-2 py-1 shrink-0">
-                      {new Date(c.issue_date).getFullYear()}
-                    </span>
-                  )}
-                </div>
-
-                <h3 className="font-display text-sm font-semibold text-ink leading-snug flex-1">
-                  {c.title}
-                </h3>
-                <p className="mt-2 font-mono text-xs text-teal">{c.issuer}</p>
-
-                {c.credential_url && (
-                  <a
-                    href={c.credential_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-5 flex w-full items-center justify-between rounded-xl border border-teal/20 bg-teal/5 px-4 py-2.5 font-mono text-[10px] uppercase tracking-widest text-teal transition-all hover:bg-teal/10"
-                  >
-                    <span>Verify Credential</span>
-                    <span>↗</span>
-                  </a>
-                )}
-              </div>
-            ))}
-          </div>
+          <CertificationsGrid certifications={sortedCertifications} />
         )}
 
         {/* Achievements */}
-        {achievements.length > 0 && (
+        {sortedAchievements.length > 0 && (
           <div className="mt-20">
             <div className="eyebrow mb-4 flex items-center gap-3">
               <span className="h-px w-8 bg-teal" />
@@ -92,7 +68,7 @@ export default async function CertificationsPage() {
             <h2 className="mb-8 font-display text-2xl font-bold text-ink">Milestones</h2>
 
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              {achievements.map((a) => (
+              {sortedAchievements.map((a) => (
                 <div key={a.id} className="glass glass-hover rounded-2xl p-6 border border-line/50 flex items-start gap-4">
                   {a.image_url ? (
                     <img
